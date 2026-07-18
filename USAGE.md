@@ -1,5 +1,7 @@
 # cl-sqids 使用说明
 
+**中文** · [English](./USAGE.en.md)
+
 > 本文档是 cl-sqids 的实战指南。如果只看 API 签名请参考 [README.md](./README.md)。
 >
 > This is a hands-on guide for cl-sqids. For the API reference see [README.md](./README.md).
@@ -567,91 +569,7 @@ sqids 不带随机性。但你可以：
 
 ---
 
-## English Quick Reference
-
-### Create instance
-
-```lisp
-(defparameter *s* (cl-sqids:make-sqids))                      ; defaults
-(defparameter *s* (cl-sqids:make-sqids :min-length 10))       ; force 10+ chars
-(defparameter *s* (cl-sqids:make-sqids :alphabet "abc..."))
-(defparameter *s* (cl-sqids:make-sqids :blocklist '()))       ; disable blocklist
-```
-
-### Encode / decode
-
-```lisp
-(cl-sqids:encode '(1 2 3) *s*)  ; => "86Rf07"
-(cl-sqids:encode 5 *s*)         ; => "uw"  (single integer OK)
-(cl-sqids:encode '() *s*)       ; => ""
-(cl-sqids:decode "86Rf07" *s*)  ; => (1 2 3)
-(cl-sqids:decode "" *s*)        ; => NIL
-(cl-sqids:decode "*" *s*)       ; => NIL  (invalid char)
-```
-
-### Common patterns
-
-```lisp
-;; Database primary key → public ID
-(defun public-id (id)
-  (cl-sqids:encode (list id) *id-sqids*))
-
-;; Public ID → database primary key (with error handling)
-(defun lookup (public-id)
-  (let ((nums (cl-sqids:decode public-id *id-sqids*)))
-    (unless (and nums (= 1 (length nums)))
-      (error "Invalid public id"))
-    (first nums)))
-
-;; Compound key
-(cl-sqids:encode (list user-id post-id reply-id) *route-sqids*)
-```
-
-### Error handling
-
-```lisp
-(handler-case
-    (cl-sqids:make-sqids :alphabet raw-alphabet)
-  (cl-sqids:alphabet-error (c)
-    (log:error "Bad alphabet: ~A" (cl-sqids:alphabet c)))
-  (cl-sqids:min-length-out-of-range-error ()
-    (log:error "min-length must be in [0, 255]")))
-```
-
-### Cross-language compatibility
-
-cl-sqids produces byte-identical output to [sqids-python](https://github.com/sqids/sqids-python) /
-[sqids-js](https://github.com/sqids/sqids-js) /
-[sqids-go](https://github.com/sqids/sqids-go) when given the same `:alphabet`,
-`:min-length`, and `:blocklist`. Default settings interoperate with default settings
-across all official ports.
-
-### Performance tips
-
-1. **Reuse instances** — `make-sqids` is not cheap (it shuffles the alphabet and filters the blocklist once).
-2. **Disable the blocklist** if the IDs are never human-visible.
-3. **Declare types** on hot paths: `(declare (type (integer 0) n))` lets SBCL optimize.
-
-### Do not
-
-- Do **not** store sqids as the primary storage — always keep the original integers in your DB.
-- Do **not** treat sqids as encryption — they are reversible by anyone.
-- Do **not** assume the blocklist catches every bad word — it is a baseline filter only.
-- Do **not** interleave `encode` on instance A with `decode` on instance B.
-
-### FAQ (short version)
-
-| Q | A |
-|---|---|
-| Empty input? | `(encode '() s)` returns `""` |
-| Decode unknown char? | Returns `NIL` (per spec) |
-| Encode 0? | Single-char result (`"bM"`) — `to-id` uses `do/while` |
-| Thread-safe? | Yes — instances are immutable |
-| Encrypted? | **No** — anyone can decode |
-
----
-
-## 反馈 / Feedback
+## 反馈
 
 发现问题或想补充文档？欢迎提 issue：
 <https://github.com/TTalkPro/cl-sqids/issues>

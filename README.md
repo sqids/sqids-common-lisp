@@ -1,5 +1,7 @@
 # cl-sqids
 
+**中文** · [English](./README.en.md)
+
 [![Common Lisp](https://img.shields.io/badge/Common%20Lisp-SBCL%20%7C%20CCL-success.svg)](https://common-lisp.dev/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
 [![Tests](https://img.shields.io/badge/tests-281%20checks%20%E2%9C%93-brightgreen.svg)](#运行测试)
@@ -23,7 +25,6 @@ sqids（"squids"）是 hashids 的现代继任者：给定一组数字，生成�
 - [运行测试](#运行测试)
 - [兼容性](#兼容性)
 - [项目结构](#项目结构)
-- [English Documentation](#english-documentation)
 - [许可证](#许可证)
 
 > 📖 **完整的实战教程、常见场景、最佳实践与 FAQ 请见 [USAGE.md](./USAGE.md)。**
@@ -254,7 +255,10 @@ Running test suite CL-SQIDS
 cl-sqids/
 ├── cl-sqids.asd              # ASDF 系统定义（含 :cl-sqids/tests 子系统）
 ├── TASK.md                   # 本次重构任务说明
-├── README.md                 # 本文档
+├── README.md                 # 中文 README（本文档）
+├── README.en.md              # English README
+├── USAGE.md                  # 中文使用指南
+├── USAGE.en.md               # English usage guide
 ├── LICENSE                   # Apache 2.0
 ├── src/
 │   ├── package.lisp          # 包定义与导出
@@ -275,63 +279,6 @@ cl-sqids/
 
 ---
 
-# English Documentation
-
-> **cl-sqids** is a Common Lisp implementation of [sqids](https://sqids.org/),
-> the modern successor to hashids. It encodes lists of non-negative integers
-> into short, unique, URL-safe, reversible strings.
-
-## Highlights
-
-- Full implementation of the [official sqids spec](https://github.com/sqids/sqids-spec) — output is byte-identical to sqids-python / sqids-js
-- CLOS-based immutable `sqids` class
-- Follows the [Google Common Lisp Style Guide](https://google.github.io/styleguide/lispguide.xml)
-- Works on **SBCL** and **CCL** (no implementation-specific code)
-- **281 FiveAM checks** ported 1:1 from sqids-python's official test vectors
-- Macros (`with-peeled-separator`) and shared helpers eliminate duplication
-
-## Quick start
-
-```lisp
-(ql:quickload :cl-sqids)
-
-(defparameter *s* (cl-sqids:make-sqids))
-(cl-sqids:encode '(1 2 3) *s*)   ; => "86Rf07"
-(cl-sqids:decode "86Rf07" *s*)   ; => (1 2 3)
-```
-
-## Customization
-
-```lisp
-;; Custom alphabet (>= 3 unique ASCII characters)
-(make-sqids :alphabet "0123456789abcdef")
-
-;; Enforce a minimum output length
-(make-sqids :min-length 10)
-
-;; Disable the blocklist
-(make-sqids :blocklist '())
-```
-
-## Conditions
-
-Every error is a subtype of `cl-sqids:sqids-error`. The conditions
-`alphabet-too-short-error`, `alphabet-duplicates-error`,
-`alphabet-multibyte-error`, `min-length-out-of-range-error`,
-`max-regenerate-attempts-error`, and `unsupported-numbers-type-error`
-provide specific `:report` messages and carry the offending value
-when applicable (see `alphabet` / `condition-value` readers).
-
-## Tests
-
-```bash
-sbcl --eval '(asdf:test-system :cl-sqids)' --quit
-# or
-ccl  --eval '(asdf:test-system :cl-sqids)' --eval '(ccl:quit)'
-```
-
----
-
-## 许可证 / License
+## 许可证
 
 [Apache License, Version 2.0](./LICENSE) — © David Gao.
